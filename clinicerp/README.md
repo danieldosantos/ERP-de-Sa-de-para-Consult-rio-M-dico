@@ -1,66 +1,202 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ClinicERP — ERP de Saúde para Consultório Médico
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este repositório contém a base inicial do projeto **ClinicERP**, construída com **Laravel** e autenticação pronta via **Laravel Breeze**.
 
-## About Laravel
+## ✅ Status atual do projeto (o que já foi feito)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Com base na estrutura atual do código:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Projeto Laravel criado e funcional.
+- Autenticação Breeze instalada (login, registro, recuperação de senha, verificação de e-mail, profile).
+- Front-end com Vite/NPM configurado.
+- Migrações padrão do Laravel presentes.
+- Model, migration e controller de `Usuario` criados (estrutura inicial/crua).
+- `DashboardController` criado (ainda não conectado nas rotas).
+- Rotas padrão de autenticação e dashboard protegidas por `auth` e `verified`.
+- Banco MySQL planejado para `clinicerp` (inclusive com opção em Docker).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🧱 Stack usada até agora
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **PHP / Laravel**
+- **Composer**
+- **MySQL**
+- **Node.js + NPM**
+- **Laravel Breeze** (Blade)
+- **Vite**
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📁 Estrutura importante já existente
 
-## Laravel Sponsors
+- `routes/web.php`: rota pública `/`, rota `/dashboard` com middleware `auth` + `verified`, e rotas de profile.
+- `routes/auth.php`: fluxo completo de autenticação Breeze.
+- `app/Models/Usuario.php`: model criado.
+- `app/Http/Controllers/UsuarioController.php`: controller resource criado (métodos ainda vazios).
+- `app/Http/Controllers/DashboardController.php`: controller criado.
+- `database/migrations/2026_04_29_155924_create_usuarios_table.php`: migration da tabela `usuarios`.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+---
 
-### Premium Partners
+## 🚀 Como rodar o projeto local
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+> Abaixo está o passo a passo consolidado, já alinhado com o que você descreveu.
 
-## Contributing
+## 1) Verificar ferramentas instaladas
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php -v
+composer -V
+mysql --version
+git --version
+node -v
+npm -v
+```
 
-## Code of Conduct
+## 2) Se faltar PHP / Composer / Node (Windows + winget)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+winget install PHP.PHP
+winget install Composer.Composer
+winget install OpenJS.NodeJS.LTS
+winget install Git.Git
+```
 
-## Security Vulnerabilities
+Feche e abra o terminal novamente, depois valide:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php -v
+composer -V
+node -v
+npm -v
+```
 
-## License
+## 3) Instalação de dependências
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Dentro da pasta do projeto:
+
+```bash
+composer install
+npm install
+```
+
+## 4) Configurar ambiente
+
+```bash
+copy .env.example .env
+php artisan key:generate
+```
+
+## 5) Configurar banco no `.env`
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=clinicerp
+DB_USERNAME=root
+DB_PASSWORD=sua_senha
+```
+
+> Se usar usuário dedicado:
+
+```env
+DB_USERNAME=clinictest
+DB_PASSWORD=saude123
+```
+
+## 6) Rodar migrações
+
+```bash
+php artisan migrate
+```
+
+## 7) Build de assets
+
+```bash
+npm run build
+```
+
+Para desenvolvimento contínuo:
+
+```bash
+npm run dev
+```
+
+## 8) Subir servidor Laravel
+
+```bash
+php artisan serve
+```
+
+Acessar: http://127.0.0.1:8000
+
+---
+
+## 🐳 Banco MySQL com Docker (já definido)
+
+Se quiser padronizar o banco via container, crie um arquivo `docker-compose.yml` na raiz com:
+
+```yaml
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_server
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: saude
+      MYSQL_DATABASE: clinicerp
+      MYSQL_USER: clinictest
+      MYSQL_PASSWORD: saude123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mysql_network
+
+volumes:
+  mysql_data:
+
+networks:
+  mysql_network:
+    driver: bridge
+```
+
+Subir o banco:
+
+```bash
+docker compose up -d
+```
+
+Depois ajuste o `.env` para bater com esse usuário/senha.
+
+---
+
+## 🛠️ Comandos úteis do dia a dia
+
+```bash
+php artisan route:list
+php artisan migrate:fresh
+php artisan cache:clear
+php artisan config:clear
+php artisan serve
+npm run dev
+```
+
+---
+
+## 📌 Próximos passos recomendados
+
+1. Conectar `DashboardController` e `UsuarioController` nas rotas.
+2. Implementar CRUD real de `usuarios` (campos, validação, views).
+3. Adicionar relacionamento entre usuários do sistema (`users`) e dados de pacientes/usuários de negócio.
+4. Criar seeders/factories para dados de teste.
+5. Escrever testes de feature para as novas rotas.
+
+---
+
+## Observação
+
+Este README substitui o README padrão do Laravel e documenta o estado atual real do projeto até este momento.
