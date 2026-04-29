@@ -1,12 +1,48 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-slate-800">Editar convênio</h2></x-slot>
-    <div class="py-8"><div class="max-w-4xl mx-auto sm:px-6 lg:px-8"><div class="bg-white shadow-sm rounded-xl border border-slate-200"><form method="POST" action="{{ route('convenios.update', $convenio) }}" class="p-6 space-y-6">@csrf @method('PUT')
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><label class="block text-sm font-medium text-slate-700">Nome</label><input name="nome" value="{{ old('nome',$convenio->nome) }}" required class="mt-1 w-full rounded-lg border-slate-300 focus:border-teal-500 focus:ring-teal-500"></div>
-                <div><label class="block text-sm font-medium text-slate-700">CNPJ</label><input name="cnpj" value="{{ old('cnpj',$convenio->cnpj) }}" class="mt-1 w-full rounded-lg border-slate-300 focus:border-teal-500 focus:ring-teal-500"></div>
-                <div><label class="block text-sm font-medium text-slate-700">Telefone</label><input name="telefone" value="{{ old('telefone',$convenio->telefone) }}" class="mt-1 w-full rounded-lg border-slate-300 focus:border-teal-500 focus:ring-teal-500"></div>
-                <div><label class="block text-sm font-medium text-slate-700">Status</label><select name="ativo" class="mt-1 w-full rounded-lg border-slate-300 focus:border-teal-500 focus:ring-teal-500"><option value="1" @selected(old('ativo',$convenio->ativo)==1)>Ativo</option><option value="0" @selected(old('ativo',1)==0)>Inativo</option></select></div>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-slate-800">Editar convênio</h2>
+    </x-slot>
+
+    <div class="py-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white shadow-sm rounded-xl border border-slate-200">
+                <form method="POST" action="{{ route('convenios.update', $convenio) }}" class="p-6">
+                    @csrf
+                    @method('PUT')
+
+                    <div>
+                        <x-input-label for="nome" :value="__('Nome')" />
+                        <x-text-input id="nome" name="nome" type="text" class="mt-1 block w-full rounded-lg border-slate-300 focus:border-teal-500 focus:ring-teal-500" :value="old('nome', $convenio->nome)" required autofocus />
+                        <x-input-error class="mt-2" :messages="$errors->get('nome')" />
+                    </div>
+
+                    <div class="mt-4">
+                        <x-input-label for="cnpj" :value="__('CNPJ')" />
+                        <x-text-input id="cnpj" name="cnpj" type="text" class="mt-1 block w-full rounded-lg border-slate-300 focus:border-teal-500 focus:ring-teal-500" :value="old('cnpj', $convenio->cnpj)" />
+                        <x-input-error class="mt-2" :messages="$errors->get('cnpj')" />
+                    </div>
+
+                    <div class="mt-4">
+                        <x-input-label for="telefone" :value="__('Telefone')" />
+                        <x-text-input id="telefone" name="telefone" type="text" class="mt-1 block w-full rounded-lg border-slate-300 focus:border-teal-500 focus:ring-teal-500" :value="old('telefone', $convenio->telefone)" />
+                        <x-input-error class="mt-2" :messages="$errors->get('telefone')" />
+                    </div>
+
+                    <div class="mt-4">
+                        <x-input-label for="ativo" :value="__('Status')" />
+                        <select id="ativo" name="ativo" class="mt-1 block w-full rounded-lg border-slate-300 focus:border-teal-500 focus:ring-teal-500">
+                            <option value="1" @selected(old('ativo', $convenio->ativo) == 1)>Ativo</option>
+                            <option value="0" @selected(old('ativo', $convenio->ativo) == 0)>Inativo</option>
+                        </select>
+                        <x-input-error class="mt-2" :messages="$errors->get('ativo')" />
+                    </div>
+
+                    <div class="mt-6 flex items-center gap-3">
+                        <button class="px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium">Salvar</button>
+                        <a href="{{ route('convenios.index') }}" class="px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium">Cancelar</a>
+                    </div>
+                </form>
             </div>
-            <div class="flex gap-3 pt-2"><button class="px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-medium">Salvar</button><a href="{{ route('convenios.index') }}" class="px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium">Cancelar</a></div>
-        </form></div></div></div>
+        </div>
+    </div>
 </x-app-layout>
