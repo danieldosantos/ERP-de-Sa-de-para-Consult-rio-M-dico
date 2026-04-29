@@ -49,6 +49,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if (! $user?->usuario || ! $user->usuario->ativo) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Usuário inativo ou sem vínculo cadastral.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 
