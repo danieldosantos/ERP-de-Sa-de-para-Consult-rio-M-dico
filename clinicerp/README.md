@@ -245,6 +245,16 @@ Data de conclusão: **29/04/2026**.
 - Se um e-mail já existir, o sistema bloqueia novo cadastro para evitar registro duplo.
 - A senha é definida no cadastro do painel e pode ser alterada na edição do usuário.
 
+
+### Erro de login: "These credentials do not match our records"
+Isso acontece quando existe registro em `usuarios`, mas não existe (ou está com senha diferente) em `users`.
+
+Agora o sistema corrige isso no fluxo do painel:
+- ao **criar** em `/usuarios`, cria (ou atualiza) a conta em `users` com a senha informada;
+- ao **editar** em `/usuarios`, sincroniza nome/e-mail e pode redefinir senha.
+
+Se você tiver usuários antigos, abra o usuário em **Editar**, informe uma nova senha e salve.
+
 ## 📌 Próximos passos recomendados
 
 1. Conectar `DashboardController` e `UsuarioController` nas rotas.

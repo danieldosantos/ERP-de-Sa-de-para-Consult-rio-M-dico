@@ -43,18 +43,17 @@ class UsuarioController extends Controller
 
         $dados = $request->validate([
             'nome' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'email', 'max:150', 'unique:usuarios,email', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:150', 'unique:usuarios,email'],
             'telefone' => ['nullable', 'string', 'max:20'],
             'ativo' => ['required', 'boolean'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
         DB::transaction(function () use ($dados) {
-            $user = User::create([
-                'name' => $dados['nome'],
-                'email' => $dados['email'],
-                'password' => Hash::make($dados['password']),
-            ]);
+            $user = User::firstOrNew(['email' => $dados['email']]);
+            $user->name = $dados['nome'];
+            $user->password = Hash::make($dados['password']);
+            $user->save();
 
             Usuario::create([
                 'user_id' => $user->id,
@@ -65,7 +64,7 @@ class UsuarioController extends Controller
             ]);
         });
 
-        return redirect()->route('usuarios.index')->with('status', 'Usuário cadastrado com login e senha com sucesso.');
+        return redirect()->route('usuarios.index')->with('status', 'Usuário cadastrado e habilitado para login com sucesso.');
     }
 
     public function edit(Usuario $usuario): View
@@ -91,18 +90,22 @@ class UsuarioController extends Controller
                 'ativo' => $dados['ativo'],
             ]);
 
-            if ($usuario->user) {
-                $updateUser = [
-                    'name' => $dados['nome'],
-                    'email' => $dados['email'],
-                ];
+            $user = $usuario->user;
 
-                if (! empty($dados['password'])) {
-                    $updateUser['password'] = Hash::make($dados['password']);
-                }
-
-                $usuario->user->update($updateUser);
+            if (! $user) {
+                $user = User::firstOrNew(['email' => $dados['email']]);
+                $usuario->user()->associate($user);
             }
+
+            $user->name = $dados['nome'];
+            $user->email = $dados['email'];
+
+            if (! empty($dados['password'])) {
+                $user->password = Hash::make($dados['password']);
+            }
+
+            $user->save();
+            $usuario->save();
         });
 
         return redirect()->route('usuarios.index')->with('status', 'Usuário atualizado com sucesso.');
