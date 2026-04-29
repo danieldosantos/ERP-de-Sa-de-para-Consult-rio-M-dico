@@ -1,0 +1,1 @@
+<x-app-layout><x-slot name='header'><h2>Médicos</h2></x-slot><div class='p-6'><a href='{{ route("medicos.create") }}'>Novo</a>@foreach($items as $i)<div>{{ $i->nome }} - {{ $i->user?->name }}</div>@endforeach</div></x-app-layout>
