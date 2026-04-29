@@ -174,6 +174,21 @@ Depois ajuste o `.env` para bater com esse usuário/senha.
 
 ---
 
+
+### Erro comum: `Table 'clinicerp.usuarios' doesn't exist`
+Se ao abrir `/usuarios` aparecer esse erro, rode:
+
+```bash
+php artisan migrate
+```
+
+Se ainda falhar, confirme se o `.env` aponta para o banco correto e execute:
+
+```bash
+php artisan config:clear
+php artisan migrate
+```
+
 ## 🛠️ Comandos úteis do dia a dia
 
 ```bash
@@ -186,6 +201,49 @@ npm run dev
 ```
 
 ---
+
+
+## 🎯 Entrega da fase atual (Dias 1 a 3) — concluída
+
+Data de conclusão: **29/04/2026**.
+
+### Escopo entregue
+- **Criar projeto Laravel + banco MySQL**
+  - Projeto Laravel funcional com configuração de banco via `.env`.
+  - Migrações prontas para tabelas padrão e tabela `usuarios`.
+- **Estudos aplicados no código**
+  - PHP básico aplicado em controllers e models.
+  - Laravel aplicado com rotas, controllers, views, migrations e models.
+- **Entregas funcionais**
+  - Tela de login (Breeze) funcionando.
+  - Dashboard inicial com atalhos do módulo.
+  - Cadastro de usuários completo (listar, criar, editar e excluir).
+
+### Rotas principais desta fase
+- `GET /login`
+- `GET /dashboard`
+- `GET /usuarios`
+- `GET /usuarios/create`
+- `PUT /usuarios/{usuario}`
+- `DELETE /usuarios/{usuario}`
+
+
+### Como cadastrar usuário no módulo `usuarios`
+1. Faça login em `http://127.0.0.1:8000/login`.
+2. Acesse `http://127.0.0.1:8000/usuarios`.
+3. Clique no botão **Cadastrar usuário** (ou **+ Novo usuário** no topo).
+4. Preencha nome, e-mail, telefone e status, e salve.
+
+> Observação: isso é diferente do `/register` (cadastro da conta de autenticação do Laravel Breeze).
+
+
+### Regras de cadastro e login (evitar duplicidade)
+- O cadastro em `/usuarios/create` agora cria **dois registros sincronizados**:
+  1. `users` (autenticação/login)
+  2. `usuarios` (dados do módulo de negócio)
+- O e-mail é validado como único em **ambas** as tabelas (`users` e `usuarios`).
+- Se um e-mail já existir, o sistema bloqueia novo cadastro para evitar registro duplo.
+- A senha é definida no cadastro do painel e pode ser alterada na edição do usuário.
 
 ## 📌 Próximos passos recomendados
 

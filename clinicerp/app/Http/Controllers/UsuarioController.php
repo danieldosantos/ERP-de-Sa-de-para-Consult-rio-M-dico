@@ -2,84 +2,123 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Usuario;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\View\View;
 
 class UsuarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(): View|RedirectResponse
     {
-        //
+        if (! Schema::hasTable('usuarios')) {
+            return redirect()->route('dashboard')->with('status', 'Tabela usuarios não encontrada. Execute: php artisan migrate');
+        }
+
+        $usuarios = Usuario::query()->latest()->paginate(10);
+
+        return view('usuarios.index', compact('usuarios'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function create(): View|RedirectResponse
     {
-        //
+        if (! Schema::hasTable('usuarios')) {
+            return redirect()->route('dashboard')->with('status', 'Tabela usuarios não encontrada. Execute: php artisan migrate');
+        }
+
+        return view('usuarios.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        if (! Schema::hasTable('usuarios')) {
+            return redirect()->route('dashboard')->with('status', 'Tabela usuarios não encontrada. Execute: php artisan migrate');
+        }
+
+        $dados = $request->validate([
+            'nome' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email', 'max:150', 'unique:usuarios,email', 'unique:users,email'],
+            'telefone' => ['nullable', 'string', 'max:20'],
+            'ativo' => ['required', 'boolean'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        DB::transaction(function () use ($dados) {
+            $user = User::create([
+                'name' => $dados['nome'],
+                'email' => $dados['email'],
+                'password' => Hash::make($dados['password']),
+            ]);
+
+            Usuario::create([
+                'user_id' => $user->id,
+                'nome' => $dados['nome'],
+                'email' => $dados['email'],
+                'telefone' => $dados['telefone'] ?? null,
+                'ativo' => $dados['ativo'],
+            ]);
+        });
+
+        return redirect()->route('usuarios.index')->with('status', 'Usuário cadastrado com login e senha com sucesso.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Usuario $usuario)
+    public function edit(Usuario $usuario): View
     {
-        //
+        return view('usuarios.edit', compact('usuario'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Usuario $usuario)
+    public function update(Request $request, Usuario $usuario): RedirectResponse
     {
-        //
+        $dados = $request->validate([
+            'nome' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email', 'max:150', Rule::unique('usuarios', 'email')->ignore($usuario->id), Rule::unique('users', 'email')->ignore($usuario->user_id)],
+            'telefone' => ['nullable', 'string', 'max:20'],
+            'ativo' => ['required', 'boolean'],
+            'password' => ['nullable', 'confirmed', Password::defaults()],
+        ]);
+
+        DB::transaction(function () use ($dados, $usuario) {
+            $usuario->update([
+                'nome' => $dados['nome'],
+                'email' => $dados['email'],
+                'telefone' => $dados['telefone'] ?? null,
+                'ativo' => $dados['ativo'],
+            ]);
+
+            if ($usuario->user) {
+                $updateUser = [
+                    'name' => $dados['nome'],
+                    'email' => $dados['email'],
+                ];
+
+                if (! empty($dados['password'])) {
+                    $updateUser['password'] = Hash::make($dados['password']);
+                }
+
+                $usuario->user->update($updateUser);
+            }
+        });
+
+        return redirect()->route('usuarios.index')->with('status', 'Usuário atualizado com sucesso.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Usuario $usuario)
+    public function destroy(Usuario $usuario): RedirectResponse
     {
-        //
-    }
+        DB::transaction(function () use ($usuario) {
+            $user = $usuario->user;
+            $usuario->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Usuario $usuario)
-    {
-        //
+            if ($user) {
+                $user->delete();
+            }
+        });
+
+        return redirect()->route('usuarios.index')->with('status', 'Usuário removido com sucesso.');
     }
 }
