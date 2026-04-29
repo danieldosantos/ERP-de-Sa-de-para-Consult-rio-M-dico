@@ -1,0 +1,208 @@
+Perfeito. Então o plano de 30 dias vira um projeto real:
+
+ERP de Saúde para Consultório Médico
+
+Objetivo: em 30 dias você aprender PHP, Laravel, MySQL, APIs e React construindo um sistema que pode virar produto.
+
+Projeto final
+
+Um sistema para consultório com:
+
+Login e permissões
+Cadastro de pacientes
+Cadastro de médicos
+Agenda de consultas
+Prontuário básico
+Anamnese
+Prescrições
+Financeiro simples
+Relatórios
+Dashboard
+Envio de lembrete por WhatsApp
+API para integração futura
+Semana 1: base do sistema
+Dias 1 a 3
+
+Criar projeto Laravel + banco MySQL.
+
+Estudar:
+
+PHP básico
+Laravel routes
+controllers
+views
+migrations
+models
+
+Entregar:
+
+tela de login
+dashboard inicial
+cadastro de usuários
+Dias 4 a 7
+
+Criar cadastros principais.
+
+Entregar:
+
+pacientes
+médicos
+especialidades
+convênios
+unidades/consultórios
+
+Projeto já deve ter CRUD completo.
+
+Semana 2: agenda médica
+Dias 8 a 10
+
+Criar módulo de agendamento.
+
+Entregar:
+
+nova consulta
+data e hora
+médico
+paciente
+status: agendada, confirmada, atendida, cancelada
+observações
+Dias 11 a 14
+
+Melhorar agenda.
+
+Entregar:
+
+filtro por médico
+filtro por dia
+busca por paciente
+bloqueio de horário duplicado
+tela de calendário simples
+Semana 3: atendimento e prontuário
+Dias 15 a 17
+
+Criar prontuário.
+
+Entregar:
+
+queixa principal
+histórico
+sinais vitais
+diagnóstico
+conduta
+observações
+Dias 18 a 21
+
+Criar anamnese e prescrição.
+
+Entregar:
+
+formulário de anamnese
+medicamentos prescritos
+exames solicitados
+PDF simples da prescrição
+Semana 4: financeiro, API e produção
+Dias 22 a 24
+
+Criar financeiro básico.
+
+Entregar:
+
+valor da consulta
+forma de pagamento
+status: pago, pendente, cancelado
+contas recebidas
+relatório por período
+Dias 25 a 26
+
+Criar dashboard.
+
+Entregar:
+
+consultas do dia
+total de pacientes
+faturamento mensal
+consultas canceladas
+próximos atendimentos
+Dias 27 a 28
+
+Criar API REST.
+
+Entregar:
+
+endpoint de pacientes
+endpoint de consultas
+endpoint de médicos
+testes no Postman
+Dias 29 a 30
+
+Preparar para portfólio e vaga.
+
+Entregar:
+
+README profissional
+prints do sistema
+deploy
+vídeo curto demonstrando
+currículo citando o projeto
+Stack recomendada
+
+Comece simples:
+
+Laravel 12
+PHP 8.4
+MySQL
+Blade
+Bootstrap ou Tailwind
+JavaScript básico
+
+Depois evolui para:
+
+React
+API Laravel
+Docker
+WhatsApp API
+geração avançada de PDF
+LGPD
+controle de permissões
+Estrutura dos módulos
+MVP em 30 dias
+Usuários
+Pacientes
+Médicos
+Agenda
+Prontuário
+Prescrição
+Financeiro
+Dashboard
+Versão produção depois dos 30 dias
+Permissões por perfil
+Logs de auditoria
+Backup automático
+Criptografia de dados sensíveis
+LGPD
+WhatsApp automático
+Assinatura digital
+Teleconsulta
+Portal do paciente
+Integração com laboratórios
+Nome do projeto
+
+ClinicERP
+
+Descrição para o GitHub:
+
+Sistema ERP para gestão de consultórios médicos, desenvolvido em Laravel, MySQL e futuramente React, com módulos de pacientes, médicos, agenda, prontuário, prescrições, financeiro e dashboard administrativo.
+
+Regra principal
+
+Todo estudo precisa virar uma tela ou função do sistema.
+
+Você não vai “estudar PHP”.
+
+Você vai estudar PHP criando o cadastro de pacientes.
+
+Você não vai “estudar API”.
+
+Você vai criar a API de consultas.
+
+Esse é o caminho mais rápido.
