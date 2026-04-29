@@ -51,7 +51,14 @@ Entregas:
 - Dashboard inicial
 - Cadastro de usuários
 
-> **Status atual:** você está nesta etapa.
+> **Status atual:** ✅ etapa concluída em 29/04/2026.
+
+
+### ✅ Entrega concluída da fase (Dias 1 a 3)
+- Projeto Laravel criado e configurado com MySQL.
+- Tela de login funcional (Laravel Breeze).
+- Dashboard inicial implementado.
+- Cadastro de usuários implementado com listagem, criação, edição e exclusão.
 
 #### Dias 4 a 7
 Criar cadastros principais:
