@@ -126,11 +126,15 @@ class UsuarioController extends Controller
 
         DB::transaction(function () use ($usuario) {
             $user = $usuario->user;
-            $usuario->delete();
 
             if ($user) {
+                // Remover primeiro da tabela users garante bloqueio de login imediatamente.
                 $user->delete();
+
+                return;
             }
+
+            $usuario->delete();
         });
 
         return redirect()->route('usuarios.index')->with('status', 'Usuário removido com sucesso.');
