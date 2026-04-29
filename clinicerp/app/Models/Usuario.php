@@ -16,10 +16,12 @@ class Usuario extends Model
         'email',
         'telefone',
         'ativo',
+        'is_admin',
     ];
 
     protected $casts = [
         'ativo' => 'boolean',
+        'is_admin' => 'boolean',
     ];
 
     public function user(): BelongsTo

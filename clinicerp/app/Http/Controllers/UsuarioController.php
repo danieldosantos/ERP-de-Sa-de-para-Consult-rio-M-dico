@@ -15,6 +15,11 @@ use Illuminate\View\View;
 
 class UsuarioController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Usuario::class, 'usuario');
+    }
+
     public function index(): View|RedirectResponse
     {
         if (! Schema::hasTable('usuarios')) {
@@ -113,6 +118,12 @@ class UsuarioController extends Controller
 
     public function destroy(Usuario $usuario): RedirectResponse
     {
+        if ($usuario->user_id === auth()->id()) {
+            return redirect()->route('usuarios.index')->withErrors([
+                'usuario' => 'Você não pode excluir seu próprio usuário por esta tela.',
+            ]);
+        }
+
         DB::transaction(function () use ($usuario) {
             $user = $usuario->user;
             $usuario->delete();
