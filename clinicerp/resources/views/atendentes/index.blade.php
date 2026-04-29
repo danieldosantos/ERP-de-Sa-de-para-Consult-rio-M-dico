@@ -1,0 +1,1 @@
+<x-app-layout><x-slot name='header'><h2>Atendentes</h2></x-slot><div class='p-6'><a href='{{ route("atendentes.create") }}'>Novo</a><table><tr><th>Nome</th><th>Usuário</th><th>Ações</th></tr>@foreach($items as $i)<tr><td>{{ $i->nome }}</td><td>{{ $i->user?->name }}</td><td><a href='{{ route("atendentes.edit",$i) }}'>Editar</a></td></tr>@endforeach</table></div></x-app-layout>

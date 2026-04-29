@@ -1,0 +1,1 @@
+<x-app-layout><div class='p-6'><form method='POST' action='{{ route("pacientes.update", $paciente) }}'>@csrf @method('PUT')<input name='nome' value='{{ old("nome",$paciente->nome) }}'><select name='ativo'><option value='1'>Ativo</option><option value='0'>Inativo</option></select><button>Salvar</button></form></div></x-app-layout>

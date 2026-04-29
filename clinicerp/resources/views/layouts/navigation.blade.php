@@ -15,9 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">
-                        {{ __('Usuários') }}
-                    </x-nav-link>
+                    <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">{{ __('Usuários') }}</x-nav-link>
+                    <x-nav-link :href="route('atendentes.index')" :active="request()->routeIs('atendentes.*')">Atendentes</x-nav-link>
+                    <x-nav-link :href="route('pacientes.index')" :active="request()->routeIs('pacientes.*')">Pacientes</x-nav-link>
+                    <x-nav-link :href="route('medicos.index')" :active="request()->routeIs('medicos.*')">Médicos</x-nav-link>
+                    <x-nav-link :href="route('especialidades.index')" :active="request()->routeIs('especialidades.*')">Especialidades</x-nav-link>
+                    <x-nav-link :href="route('convenios.index')" :active="request()->routeIs('convenios.*')">Convênios</x-nav-link>
+                    <x-nav-link :href="route('unidades-consultorios.index')" :active="request()->routeIs('unidades-consultorios.*')">Unidades/Consultórios</x-nav-link>
+
                 </div>
             </div>
 
@@ -73,9 +78,8 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">
-                {{ __('Usuários') }}
-            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">{{ __('Usuários') }}</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('atendentes.index')" :active="request()->routeIs('atendentes.*')">Atendentes</x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
