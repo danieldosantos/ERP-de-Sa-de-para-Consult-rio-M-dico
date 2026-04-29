@@ -236,6 +236,15 @@ Data de conclusão: **29/04/2026**.
 
 > Observação: isso é diferente do `/register` (cadastro da conta de autenticação do Laravel Breeze).
 
+
+### Regras de cadastro e login (evitar duplicidade)
+- O cadastro em `/usuarios/create` agora cria **dois registros sincronizados**:
+  1. `users` (autenticação/login)
+  2. `usuarios` (dados do módulo de negócio)
+- O e-mail é validado como único em **ambas** as tabelas (`users` e `usuarios`).
+- Se um e-mail já existir, o sistema bloqueia novo cadastro para evitar registro duplo.
+- A senha é definida no cadastro do painel e pode ser alterada na edição do usuário.
+
 ## 📌 Próximos passos recomendados
 
 1. Conectar `DashboardController` e `UsuarioController` nas rotas.

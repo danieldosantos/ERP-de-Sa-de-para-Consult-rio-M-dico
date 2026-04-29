@@ -8,7 +8,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <form method="POST" action="{{ route('usuarios.update', $usuario) }}" class="p-6 text-gray-900 dark:text-gray-100">
                     @method('PUT')
-                    @include('usuarios._form', ['botao' => 'Atualizar'])
+                    @include('usuarios._form', ['botao' => 'Atualizar', 'modoEdicao' => true])
                 </form>
             </div>
         </div>

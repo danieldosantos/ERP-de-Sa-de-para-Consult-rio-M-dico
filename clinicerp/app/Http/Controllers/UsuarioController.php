@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Usuario;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class UsuarioController extends Controller
@@ -38,14 +43,29 @@ class UsuarioController extends Controller
 
         $dados = $request->validate([
             'nome' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'email', 'max:150', 'unique:usuarios,email'],
+            'email' => ['required', 'email', 'max:150', 'unique:usuarios,email', 'unique:users,email'],
             'telefone' => ['nullable', 'string', 'max:20'],
             'ativo' => ['required', 'boolean'],
+            'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
-        Usuario::create($dados);
+        DB::transaction(function () use ($dados) {
+            $user = User::create([
+                'name' => $dados['nome'],
+                'email' => $dados['email'],
+                'password' => Hash::make($dados['password']),
+            ]);
 
-        return redirect()->route('usuarios.index')->with('status', 'Usuário cadastrado com sucesso.');
+            Usuario::create([
+                'user_id' => $user->id,
+                'nome' => $dados['nome'],
+                'email' => $dados['email'],
+                'telefone' => $dados['telefone'] ?? null,
+                'ativo' => $dados['ativo'],
+            ]);
+        });
+
+        return redirect()->route('usuarios.index')->with('status', 'Usuário cadastrado com login e senha com sucesso.');
     }
 
     public function edit(Usuario $usuario): View
@@ -57,19 +77,47 @@ class UsuarioController extends Controller
     {
         $dados = $request->validate([
             'nome' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'email', 'max:150', 'unique:usuarios,email,'.$usuario->id],
+            'email' => ['required', 'email', 'max:150', Rule::unique('usuarios', 'email')->ignore($usuario->id), Rule::unique('users', 'email')->ignore($usuario->user_id)],
             'telefone' => ['nullable', 'string', 'max:20'],
             'ativo' => ['required', 'boolean'],
+            'password' => ['nullable', 'confirmed', Password::defaults()],
         ]);
 
-        $usuario->update($dados);
+        DB::transaction(function () use ($dados, $usuario) {
+            $usuario->update([
+                'nome' => $dados['nome'],
+                'email' => $dados['email'],
+                'telefone' => $dados['telefone'] ?? null,
+                'ativo' => $dados['ativo'],
+            ]);
+
+            if ($usuario->user) {
+                $updateUser = [
+                    'name' => $dados['nome'],
+                    'email' => $dados['email'],
+                ];
+
+                if (! empty($dados['password'])) {
+                    $updateUser['password'] = Hash::make($dados['password']);
+                }
+
+                $usuario->user->update($updateUser);
+            }
+        });
 
         return redirect()->route('usuarios.index')->with('status', 'Usuário atualizado com sucesso.');
     }
 
     public function destroy(Usuario $usuario): RedirectResponse
     {
-        $usuario->delete();
+        DB::transaction(function () use ($usuario) {
+            $user = $usuario->user;
+            $usuario->delete();
+
+            if ($user) {
+                $user->delete();
+            }
+        });
 
         return redirect()->route('usuarios.index')->with('status', 'Usuário removido com sucesso.');
     }

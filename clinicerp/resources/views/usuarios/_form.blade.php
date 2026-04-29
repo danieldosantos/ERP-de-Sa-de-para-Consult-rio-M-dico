@@ -7,7 +7,7 @@
 </div>
 
 <div class="mt-4">
-    <x-input-label for="email" :value="__('E-mail')" />
+    <x-input-label for="email" :value="__('E-mail (login)')" />
     <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $usuario->email ?? '')" required />
     <x-input-error class="mt-2" :messages="$errors->get('email')" />
 </div>
@@ -16,6 +16,17 @@
     <x-input-label for="telefone" :value="__('Telefone')" />
     <x-text-input id="telefone" name="telefone" type="text" class="mt-1 block w-full" :value="old('telefone', $usuario->telefone ?? '')" />
     <x-input-error class="mt-2" :messages="$errors->get('telefone')" />
+</div>
+
+<div class="mt-4">
+    <x-input-label for="password" :value="$modoEdicao ? __('Nova senha (opcional)') : __('Senha de acesso')" />
+    <x-text-input id="password" name="password" type="password" class="mt-1 block w-full" :required="!$modoEdicao" />
+    <x-input-error class="mt-2" :messages="$errors->get('password')" />
+</div>
+
+<div class="mt-4">
+    <x-input-label for="password_confirmation" :value="$modoEdicao ? __('Confirmar nova senha') : __('Confirmar senha')" />
+    <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" :required="!$modoEdicao" />
 </div>
 
 <div class="mt-4">
