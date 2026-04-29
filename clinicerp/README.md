@@ -174,6 +174,21 @@ Depois ajuste o `.env` para bater com esse usuário/senha.
 
 ---
 
+
+### Erro comum: `Table 'clinicerp.usuarios' doesn't exist`
+Se ao abrir `/usuarios` aparecer esse erro, rode:
+
+```bash
+php artisan migrate
+```
+
+Se ainda falhar, confirme se o `.env` aponta para o banco correto e execute:
+
+```bash
+php artisan config:clear
+php artisan migrate
+```
+
 ## 🛠️ Comandos úteis do dia a dia
 
 ```bash
