@@ -18,4 +18,10 @@ test('new users can register', function () {
 
     $this->assertAuthenticated();
     $response->assertRedirect(RouteServiceProvider::HOME);
+
+    $this->assertDatabaseHas('usuarios', [
+        'email' => 'test@example.com',
+        'nome' => 'Test User',
+        'ativo' => true,
+    ]);
 });
