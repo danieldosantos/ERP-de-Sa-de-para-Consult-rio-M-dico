@@ -227,6 +227,15 @@ Data de conclusão: **29/04/2026**.
 - `PUT /usuarios/{usuario}`
 - `DELETE /usuarios/{usuario}`
 
+
+### Como cadastrar usuário no módulo `usuarios`
+1. Faça login em `http://127.0.0.1:8000/login`.
+2. Acesse `http://127.0.0.1:8000/usuarios`.
+3. Clique no botão **Cadastrar usuário** (ou **+ Novo usuário** no topo).
+4. Preencha nome, e-mail, telefone e status, e salve.
+
+> Observação: isso é diferente do `/register` (cadastro da conta de autenticação do Laravel Breeze).
+
 ## 📌 Próximos passos recomendados
 
 1. Conectar `DashboardController` e `UsuarioController` nas rotas.
