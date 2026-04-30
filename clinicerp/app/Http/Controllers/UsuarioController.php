@@ -26,6 +26,14 @@ class UsuarioController extends Controller
             return redirect()->route('dashboard')->with('status', 'Tabela usuarios não encontrada. Execute: php artisan migrate');
         }
 
+        // Inserções feitas direto na tabela users não disparam eventos do Laravel,
+        // então garantimos o espelho na tabela usuarios antes de listar.
+        User::query()
+            ->whereDoesntHave('usuario')
+            ->orderBy('id')
+            ->get()
+            ->each(fn (User $user) => Usuario::syncFromUser($user));
+
         $usuarios = Usuario::query()->latest()->paginate(10);
 
         return view('usuarios.index', compact('usuarios'));
