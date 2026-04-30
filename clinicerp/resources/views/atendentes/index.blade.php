@@ -1,30 +1,53 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800">Atendentes</h2>
-            <a href="{{ route('atendentes.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500">+ Novo atendente</a>
+        <div class="flex items-center justify-between gap-4">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Atendentes</h2>
+            <a href="{{ route('atendentes.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                + Novo atendente
+            </a>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-sm rounded-xl border border-slate-200 overflow-hidden">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-50 text-slate-600 uppercase text-xs">
-                        <tr><th class="px-6 py-3 text-left">Nome</th><th class="px-6 py-3 text-left">Usuário</th><th class="px-6 py-3 text-right">Ações</th></tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @forelse($items as $i)
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+            <div class="flex justify-end">
+                <a href="{{ route('atendentes.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    Cadastrar atendente
+                </a>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
                             <tr>
-                                <td class="px-6 py-4">{{ $i->nome }}</td><td class="px-6 py-4">{{ $i->user?->name ?? '—' }}</td>
-                                <td class="px-6 py-4 text-right"><a href="{{ route('atendentes.edit',$i) }}" class="text-indigo-600 hover:underline">Editar</a></td>
+                                <th class="border-b py-2">Nome</th>
+                                <th class="border-b py-2">Usuário</th>
+                                <th class="border-b py-2 text-right">Ações</th>
                             </tr>
-                        @empty
-                            <tr><td colspan="3" class="px-6 py-6 text-center text-slate-500">Nenhum atendente cadastrado.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-                <div class="p-4">{{ $items->links() }}</div>
+                        </thead>
+                        <tbody>
+                            @forelse($items as $item)
+                                <tr>
+                                    <td class="py-3">{{ $item->nome }}</td>
+                                    <td class="py-3">{{ $item->user?->name ?? '—' }}</td>
+                                    <td class="py-3 text-right"><a href="{{ route('atendentes.edit', $item) }}" class="text-indigo-600 hover:underline">Editar</a></td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="py-6 text-center text-gray-500">
+                                        Nenhum atendente cadastrado.
+                                        <div class="mt-3">
+                                            <a href="{{ route('atendentes.create') }}" class="text-indigo-600 hover:underline font-semibold">Clique aqui para cadastrar o primeiro atendente.</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+
+                    <div class="mt-4">{{ $items->links() }}</div>
+                </div>
             </div>
         </div>
     </div>
