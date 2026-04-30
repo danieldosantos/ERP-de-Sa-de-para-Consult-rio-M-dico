@@ -50,12 +50,22 @@ class LoginRequest extends FormRequest
         }
 
         $user = Auth::user();
-        if (! $user?->usuario || ! $user->usuario->ativo) {
+
+        if (! $user?->usuario) {
             Auth::logout();
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => 'Usuário inativo ou sem vínculo cadastral.',
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
+        if (! $user->usuario->ativo) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Porgentileza entre em contato com suporte da empresa',
             ]);
         }
 
