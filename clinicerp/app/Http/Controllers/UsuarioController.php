@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Usuario;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class UsuarioController extends Controller
@@ -62,20 +64,36 @@ class UsuarioController extends Controller
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
-        DB::transaction(function () use ($dados) {
-            $user = User::firstOrNew(['email' => $dados['email']]);
-            $user->name = $dados['nome'];
-            $user->password = Hash::make($dados['password']);
-            $user->save();
-
-            Usuario::create([
-                'user_id' => $user->id,
-                'nome' => $dados['nome'],
-                'email' => $dados['email'],
-                'telefone' => $dados['telefone'] ?? null,
-                'ativo' => $dados['ativo'],
+        if (Usuario::where('email', $dados['email'])->exists()) {
+            throw ValidationException::withMessages([
+                'email' => 'Este e-mail já está cadastrado em outro usuário.',
             ]);
-        });
+        }
+
+        try {
+            DB::transaction(function () use ($dados) {
+                $user = User::firstOrNew(['email' => $dados['email']]);
+                $user->name = $dados['nome'];
+                $user->password = Hash::make($dados['password']);
+                $user->save();
+
+                Usuario::create([
+                    'user_id' => $user->id,
+                    'nome' => $dados['nome'],
+                    'email' => $dados['email'],
+                    'telefone' => $dados['telefone'] ?? null,
+                    'ativo' => $dados['ativo'],
+                ]);
+            });
+        } catch (QueryException $exception) {
+            if ($exception->errorInfo[1] === 1062) {
+                throw ValidationException::withMessages([
+                    'email' => 'Este e-mail já está cadastrado em outro usuário.',
+                ]);
+            }
+
+            throw $exception;
+        }
 
         return redirect()->route('usuarios.index')->with('status', 'Usuário cadastrado e habilitado para login com sucesso.');
     }

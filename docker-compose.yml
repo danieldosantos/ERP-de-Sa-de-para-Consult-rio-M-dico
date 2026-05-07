@@ -1,0 +1,23 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_server
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: saude
+      MYSQL_DATABASE: clinicerp
+      MYSQL_USER: clinictest
+      MYSQL_PASSWORD: saude123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mysql_network
+
+volumes:
+  mysql_data:
+
+networks:
+  mysql_network:
+    driver: bridge
