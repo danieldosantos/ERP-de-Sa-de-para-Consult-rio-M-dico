@@ -17,6 +17,7 @@
                     </x-nav-link>
                     <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">{{ __('Usuários') }}</x-nav-link>
                     <x-nav-link :href="route('atendentes.index')" :active="request()->routeIs('atendentes.*')">Atendentes</x-nav-link>
+                    <x-nav-link :href="route('agendamentos.index')" :active="request()->routeIs('agendamentos.*')">Agendamentos</x-nav-link>
                     <x-nav-link :href="route('pacientes.index')" :active="request()->routeIs('pacientes.*')">Pacientes</x-nav-link>
                     <x-nav-link :href="route('medicos.index')" :active="request()->routeIs('medicos.*')">Médicos</x-nav-link>
                     <x-nav-link :href="route('especialidades.index')" :active="request()->routeIs('especialidades.*')">Especialidades</x-nav-link>
@@ -80,6 +81,7 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">{{ __('Usuários') }}</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('atendentes.index')" :active="request()->routeIs('atendentes.*')">Atendentes</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('agendamentos.index')" :active="request()->routeIs('agendamentos.*')">Agendamentos</x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\AtendenteController;
 use App\Http\Controllers\ConvenioController;
 use App\Http\Controllers\EspecialidadeController;
@@ -20,6 +21,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('usuarios', UsuarioController::class)->except(['show']);
     Route::resource('atendentes', AtendenteController::class)->except(['show']);
+    Route::resource('agendamentos', AgendamentoController::class)->except(['show']);
     Route::resource('pacientes', PacienteController::class)->except(['show']);
     Route::resource('medicos', MedicoController::class)->except(['show']);
     Route::resource('especialidades', EspecialidadeController::class)->except(['show']);
