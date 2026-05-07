@@ -23,6 +23,7 @@
                     <x-nav-link :href="route('especialidades.index')" :active="request()->routeIs('especialidades.*')">Especialidades</x-nav-link>
                     <x-nav-link :href="route('convenios.index')" :active="request()->routeIs('convenios.*')">Convênios</x-nav-link>
                     <x-nav-link :href="route('unidades-consultorios.index')" :active="request()->routeIs('unidades-consultorios.*')">Unidades/Consultórios</x-nav-link>
+                    <x-nav-link :href="route('medico.painel')" :active="request()->routeIs('medico.*')">Painel Médico</x-nav-link>
 
                 </div>
             </div>
@@ -82,6 +83,7 @@
             <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">{{ __('Usuários') }}</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('atendentes.index')" :active="request()->routeIs('atendentes.*')">Atendentes</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('agendamentos.index')" :active="request()->routeIs('agendamentos.*')">Agendamentos</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('medico.painel')" :active="request()->routeIs('medico.*')">Painel Médico</x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
