@@ -1,0 +1,2 @@
+import{Ca as r,Da as p,Jd as s,db as c,ja as o,ma as a}from"./chunk-HAWX2XEI.js";var d=(()=>{let e=class e{constructor(i){this.dialogRef=i}ngOnInit(){}};e.\u0275fac=function(n){return new(n||e)(o(s))},e.\u0275cmp=a({type:e,selectors:[["app-create-webapp"]],decls:2,vars:0,template:function(n,m){n&1&&(r(0,"p"),c(1,"create-webapp works!"),p())},encapsulation:2});let t=e;return t})();export{d as a};
+/**i18n:de94916d77c020799d465cef81d542a7dba531be1c77bfaecdd5d4f09189bc8d*/

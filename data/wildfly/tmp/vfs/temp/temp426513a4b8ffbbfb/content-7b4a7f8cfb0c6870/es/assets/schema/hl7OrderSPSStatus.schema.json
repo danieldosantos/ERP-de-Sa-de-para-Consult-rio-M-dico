@@ -1,0 +1,40 @@
+{
+  "title": "Estado SPS para Orden HL7",
+  "description": "Especifica el Estado SPS de los ítems DICOM MWL creados/actualizados en los mensajes HL7 ORM^O01, OMI^O23, OMG^O19 recibidos.",
+  "type": "object",
+  "required": [
+    "dcmSPSStatus",
+    "hl7OrderControlStatus"
+  ],
+  "properties": {
+    "dcmSPSStatus": {
+      "title": "Código de estado de paso de procedimiento programado",
+      "description": "Código de estado de paso de procedimiento programado.",
+      "type": "string",
+      "enum": [
+        "SCHEDULED",
+        "CANCELED",
+        "DISCONTINUED",
+        "COMPLETED"
+      ]
+    },
+    "hl7OrderControlStatus": {
+      "title": "Combinaciones HL7 de Estado de Control de Pedidos",
+      "description": "HL7 Código de Estado de Control de Pedidos. Estas combinaciones se refieren a valores presentes en ORC-1_ORC-5.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "NW_SC|ORC.1 = NW & ORC.5 = SC => SPSStatus = SCHEDULED",
+          "NW_IP|ORC.1 = NW & ORC.5 = IP => SPSStatus = SCHEDULED",
+          "CA_CA|ORC.1 = CA & ORC.5 = CA => SPSStatus = CANCELED",
+          "DC_CA|ORC.1 = DC & ORC.5 = CA => SPSStatus = DISCONTINUED",
+          "XO_SC|ORC.1 = XO & ORC.5 = SC => SPSStatus = SCHEDULED",
+          "XO_CM|ORC.1 = XO & ORC.5 = CM => SPSStatus = COMPLETED",
+          "SC_CM|ORC.1 = SC & ORC.5 = CM => SPSStatus = COMPLETED",
+          "SC_A|ORC.1 = SC & ORC.5 = A => SPSStatus = COMPLETED"
+        ]
+      }
+    }
+  }
+}
