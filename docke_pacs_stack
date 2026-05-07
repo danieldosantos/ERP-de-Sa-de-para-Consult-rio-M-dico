@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+  ldap:
+    image: dcm4che/slapd-dcm4chee:2.6.10-35.0
+    container_name: erp-pacs-ldap
+    restart: always
+    hostname: ldap
+    networks:
+      pacs_net:
+        aliases:
+          - ldap
+    environment:
+      LDAP_URLS: "ldap:///"
+      ARCHIVE_HOST: arc
+      STORAGE_DIR: /storage/fs1
+    volumes:
+      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/ldap:/var/lib/openldap/openldap-data
+      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/slapd:/etc/openldap/slapd.d
+
+  db:
+    image: dcm4che/postgres-dcm4chee:18.3-35
+    container_name: erp-pacs-db
+    restart: always
+    hostname: db
+    networks:
+      pacs_net:
+        aliases:
+          - db
+    environment:
+      POSTGRES_DB: pacsdb
+      POSTGRES_USER: pacs
+      POSTGRES_PASSWORD: pacs
+    volumes:
+      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/db:/var/lib/postgresql
+
+  arc:
+    image: dcm4che/dcm4chee-arc-psql:5.35.0
+    container_name: erp-pacs-arc
+    restart: always
+    hostname: arc
+    networks:
+      pacs_net:
+        aliases:
+          - arc
+    ports:
+      - "8081:8080"
+      - "8443:8443"
+      - "9990:9990"
+      - "11112:11112"
+      - "2575:2575"
+    environment:
+      WILDFLY_ADMIN_USER: admin
+      WILDFLY_ADMIN_PASSWORD: admin
+      WILDFLY_DEPLOY_UI: "true"
+      WILDFLY_PACSDS_USE_CCM: "false"
+      POSTGRES_DB: pacsdb
+      POSTGRES_USER: pacs
+      POSTGRES_PASSWORD: pacs
+      WILDFLY_CHOWN: /storage
+      WILDFLY_WAIT_FOR: "ldap:389 db:5432"
+      JAVA_OPTS: >-
+        -Xms64m
+        -Xmx512m
+        -XX:MetaspaceSize=96M
+        -XX:MaxMetaspaceSize=256m
+        -Djava.net.preferIPv4Stack=true
+        -Djava.awt.headless=true
+    depends_on:
+      - ldap
+      - db
+    volumes:
+      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/wildfly:/opt/wildfly/standalone
+      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/pacs:/storage
+
+networks:
+  pacs_net:
+    driver: bridge
