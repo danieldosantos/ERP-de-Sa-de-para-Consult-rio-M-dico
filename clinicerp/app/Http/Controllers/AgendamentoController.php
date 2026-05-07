@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agendamento;
+use App\Models\Especialidade;
 use App\Models\Medico;
 use App\Models\Paciente;
 use Illuminate\Http\RedirectResponse;
@@ -12,18 +13,19 @@ class AgendamentoController extends Controller
 {
     public function index(): View
     {
-        $items = Agendamento::with(['medico', 'paciente'])->latest('data_hora')->paginate(10);
+        $items = Agendamento::with(['medico.especialidade', 'medico.unidadeConsultorio', 'paciente'])->latest('data_hora')->paginate(10);
 
         return view('agendamentos.index', compact('items'));
     }
 
     public function create(): View
     {
-        $medicos = Medico::orderBy('nome')->get();
+        $medicos = Medico::with(['especialidade', 'unidadeConsultorio'])->orderBy('nome')->get();
+        $especialidades = Especialidade::orderBy('nome')->get();
         $pacientes = Paciente::orderBy('nome')->get();
         $statusOpcoes = Agendamento::STATUS_OPCOES;
 
-        return view('agendamentos.create', compact('medicos', 'pacientes', 'statusOpcoes'));
+        return view('agendamentos.create', compact('medicos', 'especialidades', 'pacientes', 'statusOpcoes'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -43,11 +45,12 @@ class AgendamentoController extends Controller
 
     public function edit(Agendamento $agendamento): View
     {
-        $medicos = Medico::orderBy('nome')->get();
+        $medicos = Medico::with(['especialidade', 'unidadeConsultorio'])->orderBy('nome')->get();
+        $especialidades = Especialidade::orderBy('nome')->get();
         $pacientes = Paciente::orderBy('nome')->get();
         $statusOpcoes = Agendamento::STATUS_OPCOES;
 
-        return view('agendamentos.edit', compact('agendamento', 'medicos', 'pacientes', 'statusOpcoes'));
+        return view('agendamentos.edit', compact('agendamento', 'medicos', 'especialidades', 'pacientes', 'statusOpcoes'));
     }
 
     public function update(Request $request, Agendamento $agendamento): RedirectResponse
