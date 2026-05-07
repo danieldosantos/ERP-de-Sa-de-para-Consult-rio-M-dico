@@ -1,0 +1,5 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+return new class extends Migration { public function up(): void { Schema::create('exames', function (Blueprint $table) { $table->id(); $table->string('codigo', 40)->unique(); $table->string('descricao', 150); $table->string('modalidade', 20); $table->timestamps(); }); Schema::create('exames_solicitados', function (Blueprint $table) { $table->id(); $table->foreignId('agendamento_id')->constrained()->cascadeOnDelete(); $table->foreignId('medico_id')->constrained()->cascadeOnDelete(); $table->foreignId('paciente_id')->constrained()->cascadeOnDelete(); $table->foreignId('exame_id')->constrained('exames')->cascadeOnDelete(); $table->string('numero_pedido', 50)->unique(); $table->dateTime('agendado_para'); $table->string('status', 30)->default('aguardando resultado'); $table->text('hl7_ack')->nullable(); $table->timestamps(); }); } public function down(): void { Schema::dropIfExists('exames_solicitados'); Schema::dropIfExists('exames'); } };
