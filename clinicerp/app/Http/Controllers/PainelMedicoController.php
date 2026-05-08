@@ -12,6 +12,7 @@ use App\Services\Hl7MllpService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 
 class PainelMedicoController extends Controller
 {
@@ -25,36 +26,58 @@ class PainelMedicoController extends Controller
         return view('medico.painel', compact('medico','agendamentos','exames','solicitacoes'));
     }
 
-    public function salvarProntuario(Request $request): RedirectResponse {
+    public function salvarProntuario(Request $request): RedirectResponse|JsonResponse {
         $medico = $this->medicoLogado();
         $data = $request->validate(['agendamento_id'=>'required|exists:agendamentos,id','queixa_principal'=>'required','historico'=>'nullable','sinais_vitais'=>'nullable','diagnostico'=>'nullable','conduta'=>'nullable','observacoes'=>'nullable']);
         $data['medico_id'] = $medico->id;
         Prontuario::updateOrCreate(['agendamento_id'=>$data['agendamento_id']], $data);
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Prontuário salvo.']);
+        }
+
         return back()->with('status','Prontuário salvo.');
     }
 
-    public function salvarAnamnesePrescricao(Request $request): RedirectResponse {
+    public function salvarAnamnesePrescricao(Request $request): RedirectResponse|JsonResponse {
         $medico = $this->medicoLogado();
         $data = $request->validate(['agendamento_id'=>'required|exists:agendamentos,id','dados'=>'required','medicamentos'=>'required']);
         Anamnese::updateOrCreate(['agendamento_id'=>$data['agendamento_id']], ['medico_id'=>$medico->id, 'dados'=>$data['dados']]);
         Prescricao::updateOrCreate(['agendamento_id'=>$data['agendamento_id']], ['medico_id'=>$medico->id, 'medicamentos'=>$data['medicamentos']]);
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Anamnese e prescrição salvas.']);
+        }
+
         return back()->with('status','Anamnese e prescrição salvas.');
     }
 
-    public function solicitarExame(Request $request, Hl7MllpService $hl7): RedirectResponse {
+    public function solicitarExame(Request $request, Hl7MllpService $hl7): RedirectResponse|JsonResponse {
         $medico = $this->medicoLogado();
-        $data = $request->validate(['agendamento_id'=>'required|exists:agendamentos,id','exame_id'=>'required|exists:exames,id','agendado_para'=>'required|date']);
+        $data = $request->validate([
+            'agendamento_id'=>'required|exists:agendamentos,id',
+            'exame_ids'=>'required|array|min:1',
+            'exame_ids.*'=>'required|exists:exames,id',
+            'agendado_para'=>'required|date'
+        ]);
         $ag = Agendamento::with('paciente')->findOrFail($data['agendamento_id']);
-        $exame = Exame::findOrFail($data['exame_id']);
-        $pedido = 'PED'.now()->format('YmdHis');
-        $hl7Message = "MSH|^~\\&|MEU_ERP|CLINICA|DCM4CHEE|PACS|".now()->format('YmdHis')."||ORM^O01|{$pedido}|P|2.5\n".
-            "PID|||{$ag->paciente->id}||".strtoupper(str_replace(' ','^',$ag->paciente->nome))."\nPV1||O\nORC|NW|{$pedido}\n".
-            "OBR|1|{$pedido}||{$exame->codigo}^{$exame->descricao}|||".date('YmdHi', strtotime($data['agendado_para']));
+        $exames = Exame::whereIn('id', $data['exame_ids'])->get()->keyBy('id');
 
-        $ack = '';
-        try { $ack = $hl7->sendOrm(env('DCM4CHEE_HOST','localhost'), (int) env('DCM4CHEE_HL7_PORT',2575), $hl7Message); } catch (\Throwable $e) { $ack = $e->getMessage(); }
+        foreach ($data['exame_ids'] as $index => $exameId) {
+            $exame = $exames[$exameId];
+            $pedido = 'PED'.now()->format('YmdHis').str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
+            $hl7Message = "MSH|^~\\&|MEU_ERP|CLINICA|DCM4CHEE|PACS|".now()->format('YmdHis')."||ORM^O01|{$pedido}|P|2.5\n".
+                "PID|||{$ag->paciente->id}||".strtoupper(str_replace(' ','^',$ag->paciente->nome))."\nPV1||O\nORC|NW|{$pedido}\n".
+                "OBR|1|{$pedido}||{$exame->codigo}^{$exame->descricao}|||".date('YmdHi', strtotime($data['agendado_para']));
 
-        ExameSolicitado::create(['agendamento_id'=>$ag->id,'medico_id'=>$medico->id,'paciente_id'=>$ag->paciente_id,'exame_id'=>$exame->id,'numero_pedido'=>$pedido,'agendado_para'=>$data['agendado_para'],'status'=>'aguardando resultado','hl7_ack'=>$ack]);
-        return back()->with('status','Exame solicitado ao DCM4CHEE.');
+            $ack = '';
+            try { $ack = $hl7->sendOrm(env('DCM4CHEE_HOST','localhost'), (int) env('DCM4CHEE_HL7_PORT',2575), $hl7Message); } catch (\Throwable $e) { $ack = $e->getMessage(); }
+
+            ExameSolicitado::create(['agendamento_id'=>$ag->id,'medico_id'=>$medico->id,'paciente_id'=>$ag->paciente_id,'exame_id'=>$exame->id,'numero_pedido'=>$pedido,'agendado_para'=>$data['agendado_para'],'status'=>'aguardando resultado','hl7_ack'=>$ack]);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Exame(s) solicitado(s) ao DCM4CHEE.']);
+        }
+
+        return back()->with('status','Exame(s) solicitado(s) ao DCM4CHEE.');
     }
 }
