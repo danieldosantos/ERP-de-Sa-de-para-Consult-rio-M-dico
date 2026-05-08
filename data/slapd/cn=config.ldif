@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
-# CRC32 2b0530be
+# CRC32 59b5288c
 dn: cn=config
 objectClass: olcGlobal
 cn: config
@@ -10,9 +10,9 @@ olcTLSCertificateFile: /etc/certs/cert.pem
 olcTLSCertificateKeyFile: /etc/certs/key.pem
 olcTLSVerifyClient: never
 structuralObjectClass: olcGlobal
-entryUUID: 4164c0fd-fbc4-4c4c-9219-f1db5abf3962
+entryUUID: c548f0fb-f45a-4561-931b-529bb48a7e4c
 creatorsName: cn=config
-createTimestamp: 20260505175317Z
-entryCSN: 20260505175317.125333Z#000000#000#000000
+createTimestamp: 20260507204117Z
+entryCSN: 20260507204117.922984Z#000000#000#000000
 modifiersName: cn=config
-modifyTimestamp: 20260505175317Z
+modifyTimestamp: 20260507204117Z

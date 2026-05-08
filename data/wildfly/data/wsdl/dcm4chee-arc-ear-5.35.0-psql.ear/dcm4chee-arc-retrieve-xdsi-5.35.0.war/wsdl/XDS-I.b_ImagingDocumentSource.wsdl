@@ -96,7 +96,7 @@
   </binding>
   <service name="ImagingDocumentSource">
     <port binding="iherad:ImagingDocumentSource_Binding" name="ImagingDocumentSource_Port_Soap12">
-      <soap12:address location="http://172.22.0.2:8080/dcm4chee-arc/xdsi/ImagingDocumentSource"/>
+      <soap12:address location="http://172.22.0.3:8080/dcm4chee-arc/xdsi/ImagingDocumentSource"/>
     </port>
   </service>
 </definitions>
