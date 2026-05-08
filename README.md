@@ -124,3 +124,36 @@ Fluxo recomendado:
 - O campo `password` em `users` deve ser um **hash bcrypt**.
 - Se preferir, faça o cadastro pela interface web (`/usuarios/create`) para o Laravel sincronizar os dados automaticamente.
 
+---
+
+## Integração PACS (dcm4chee + MWL)
+
+Este repositório possui uma stack dedicada em `docker-compose.pacs.yml` para subir LDAP + Postgres + dcm4chee-arc.
+
+### Subir a stack PACS
+
+```bash
+docker compose -f docker-compose.pacs.yml up -d
+```
+
+### Variáveis no ERP (`clinicerp/.env`)
+
+```env
+DCM4CHEE_HOST=127.0.0.1
+DCM4CHEE_HL7_PORT=2575
+DCM4CHEE_STATION_AE_TITLE=SCHEDULEDSTATION
+DCM4CHEE_MODALITY_DEFAULT=CR
+```
+
+### Formato HL7 ORM enviado pelo ERP
+
+A aplicação envia mensagens com os campos necessários para criação de MWL no dcm4chee:
+
+- `ORC-1=NW`
+- `ORC-5=SC`
+- `ORC-18=<station AE title>`
+- `OBR-4=<código exame>`
+- `OBR-18=<accession number>`
+- `OBR-24=<modalidade>`
+
+Isso garante compatibilidade com o fluxo: ERP envia ORM -> dcm4chee cria MWL -> modalidade consulta MWL.
