@@ -3,6 +3,7 @@
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\AtendenteController;
 use App\Http\Controllers\ConvenioController;
+use App\Http\Controllers\ExameController;
 use App\Http\Controllers\EspecialidadeController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\PacienteController;
@@ -27,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('medicos', MedicoController::class)->except(['show']);
     Route::resource('especialidades', EspecialidadeController::class)->except(['show']);
     Route::resource('convenios', ConvenioController::class)->except(['show']);
+    Route::resource('exames', ExameController::class)->only(['index', 'store', 'destroy']);
 
     Route::get('/medico/painel', [PainelMedicoController::class, 'index'])->name('medico.painel');
     Route::post('/medico/prontuario', [PainelMedicoController::class, 'salvarProntuario'])->name('medico.prontuario.salvar');

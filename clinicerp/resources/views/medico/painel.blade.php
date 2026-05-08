@@ -58,7 +58,7 @@
                         <option value="{{ $a->id }}">{{ $a->paciente->nome }} - {{ $a->data_hora }}</option>
                     @endforeach
                 </select>
-                <label class="block text-sm font-medium">Exames de radiologia (20 itens, selecione um ou mais):</label>
+                <label class="block text-sm font-medium">Exames de radiologia (selecione um ou mais):</label>
                 <select name="exame_ids[]" class="w-full" multiple size="10" required>
                     @foreach($exames as $e)
                         <option value="{{ $e->id }}">{{ $e->codigo }} - {{ $e->descricao }} ({{ $e->modalidade }})</option>
