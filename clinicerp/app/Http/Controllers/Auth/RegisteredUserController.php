@@ -63,15 +63,6 @@ class RegisteredUserController extends Controller
                     'password' => Hash::make($request->password),
                 ]);
 
-                if (Schema::hasTable('usuarios')) {
-                    Usuario::create([
-                        'user_id' => $user->id,
-                        'nome' => $user->name,
-                        'email' => $user->email,
-                        'ativo' => true,
-                        'is_admin' => false,
-                    ]);
-                }
 
                 return $user;
             });
