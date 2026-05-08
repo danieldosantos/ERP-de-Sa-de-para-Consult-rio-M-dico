@@ -6,43 +6,38 @@ services:
     container_name: erp-pacs-ldap
     restart: always
     hostname: ldap
-    networks:
-      pacs_net:
-        aliases:
-          - ldap
     environment:
       LDAP_URLS: "ldap:///"
       ARCHIVE_HOST: arc
       STORAGE_DIR: /storage/fs1
     volumes:
-      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/ldap:/var/lib/openldap/openldap-data
-      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/slapd:/etc/openldap/slapd.d
+      - ./data/ldap:/var/lib/openldap/openldap-data
+      - ./data/slapd:/etc/openldap/slapd.d
+    networks:
+      - pacs_net
 
   db:
     image: dcm4che/postgres-dcm4chee:18.3-35
     container_name: erp-pacs-db
     restart: always
     hostname: db
-    networks:
-      pacs_net:
-        aliases:
-          - db
     environment:
       POSTGRES_DB: pacsdb
       POSTGRES_USER: pacs
       POSTGRES_PASSWORD: pacs
     volumes:
-      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/db:/var/lib/postgresql
+      - ./data/db:/var/lib/postgresql
+    networks:
+      - pacs_net
 
   arc:
     image: dcm4che/dcm4chee-arc-psql:5.35.0
     container_name: erp-pacs-arc
     restart: always
     hostname: arc
-    networks:
-      pacs_net:
-        aliases:
-          - arc
+    depends_on:
+      - ldap
+      - db
     ports:
       - "8081:8080"
       - "8443:8443"
@@ -60,18 +55,17 @@ services:
       WILDFLY_CHOWN: /storage
       WILDFLY_WAIT_FOR: "ldap:389 db:5432"
       JAVA_OPTS: >-
-        -Xms64m
-        -Xmx512m
+        -Xms128m
+        -Xmx1024m
         -XX:MetaspaceSize=96M
         -XX:MaxMetaspaceSize=256m
         -Djava.net.preferIPv4Stack=true
         -Djava.awt.headless=true
-    depends_on:
-      - ldap
-      - db
     volumes:
-      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/wildfly:/opt/wildfly/standalone
-      - /host_mnt/c/ERP-de-Sa-de-para-Consult-rio-M-dico/data/pacs:/storage
+      - ./data/wildfly:/opt/wildfly/standalone
+      - ./data/pacs:/storage
+    networks:
+      - pacs_net
 
 networks:
   pacs_net:

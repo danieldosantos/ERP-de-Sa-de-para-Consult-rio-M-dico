@@ -1,0 +1,6 @@
+dn: dicomAETitle=RX01,dicomDeviceName=dcm4chee-arc,cn=Devices,cn=DICOM Configuration,dc=dcm4che,dc=org
+objectClass: dicomNetworkAE
+dicomAETitle: RX01
+dicomAssociationInitiator: TRUE
+dicomAssociationAcceptor: TRUE
+dicomNetworkConnectionReference: cn=dicom,dicomDeviceName=dcm4chee-arc,cn=Devices,cn=DICOM Configuration,dc=dcm4che,dc=org

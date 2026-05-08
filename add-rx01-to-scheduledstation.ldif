@@ -1,0 +1,6 @@
+dn: dicomAETitle=RX01,dicomDeviceName=scheduledstation,cn=Devices,cn=DICOM Configuration,dc=dcm4che,dc=org
+objectClass: dicomNetworkAE
+dicomAETitle: RX01
+dicomAssociationInitiator: TRUE
+dicomAssociationAcceptor: TRUE
+dicomNetworkConnectionReference: cn=dicom,dicomDeviceName=scheduledstation,cn=Devices,cn=DICOM Configuration,dc=dcm4che,dc=org

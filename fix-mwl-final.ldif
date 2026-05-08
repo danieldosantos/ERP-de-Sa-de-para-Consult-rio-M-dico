@@ -1,0 +1,17 @@
+dn: dicomDeviceName=dcm4chee-arc,cn=Devices,cn=DICOM Configuration,dc=dcm4che,dc=org
+changetype: modify
+replace: hl7ScheduleProcedureTemplateURI
+hl7ScheduleProcedureTemplateURI: ${jboss.server.temp.url}/dcm4chee-arc/hl7-order2dcm.xsl
+-
+replace: hl7ScheduledStationAETInOrder
+hl7ScheduledStationAETInOrder: ORC_18
+-
+replace: dcmHideSPSWithStatusFromMWLSCP
+dcmHideSPSWithStatusFromMWLSCP: CANCELED
+dcmHideSPSWithStatusFromMWLSCP: COMPLETED
+dcmHideSPSWithStatusFromMWLSCP: DISCONTINUED
+-
+replace: dcmHideSPSWithStatusFromMWLRS
+dcmHideSPSWithStatusFromMWLRS: CANCELED
+dcmHideSPSWithStatusFromMWLRS: COMPLETED
+dcmHideSPSWithStatusFromMWLRS: DISCONTINUED
