@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+  ldap:
+    image: dcm4che/slapd-dcm4chee:2.6.10-35.0
+    container_name: erp-pacs-ldap
+    restart: unless-stopped
+    hostname: ldap
+    environment:
+      LDAP_URLS: "ldap:///"
+      ARCHIVE_HOST: arc
+      STORAGE_DIR: /storage/fs1
+    volumes:
+      - ./data/ldap:/var/lib/openldap/openldap-data
+      - ./data/slapd:/etc/openldap/slapd.d
+    networks:
+      - pacs_net
+
+  db:
+    image: dcm4che/postgres-dcm4chee:18.3-35
+    container_name: erp-pacs-db
+    restart: unless-stopped
+    hostname: db
+    environment:
+      POSTGRES_DB: pacsdb
+      POSTGRES_USER: pacs
+      POSTGRES_PASSWORD: pacs
+    volumes:
+      - ./data/db:/var/lib/postgresql
+    networks:
+      - pacs_net
+
+  arc:
+    image: dcm4che/dcm4chee-arc-psql:5.35.0
+    container_name: erp-pacs-arc
+    restart: unless-stopped
+    hostname: arc
+    depends_on:
+      - ldap
+      - db
+    ports:
+      - "8081:8080"
+      - "8443:8443"
+      - "9990:9990"
+      - "11112:11112"
+      - "2575:2575"
+    environment:
+      WILDFLY_ADMIN_USER: admin
+      WILDFLY_ADMIN_PASSWORD: admin
+      WILDFLY_DEPLOY_UI: "true"
+      WILDFLY_PACSDS_USE_CCM: "false"
+      POSTGRES_DB: pacsdb
+      POSTGRES_USER: pacs
+      POSTGRES_PASSWORD: pacs
+      WILDFLY_CHOWN: /storage
+      WILDFLY_WAIT_FOR: "ldap:389 db:5432"
+      JAVA_OPTS: >-
+        -Xms256m
+        -Xmx1536m
+        -XX:MetaspaceSize=128M
+        -XX:MaxMetaspaceSize=384m
+        -Djava.net.preferIPv4Stack=true
+        -Djava.awt.headless=true
+    volumes:
+      - ./data/wildfly:/opt/wildfly/standalone
+      - ./data/pacs:/storage
+    networks:
+      - pacs_net
+
+networks:
+  pacs_net:
+    driver: bridge

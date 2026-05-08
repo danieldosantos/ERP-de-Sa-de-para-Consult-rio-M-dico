@@ -68,11 +68,16 @@ class PainelMedicoController extends Controller
         foreach ($data['exame_ids'] as $index => $exameId) {
             $exame = $exames[$exameId];
             $pedido = 'PED'.now()->format('YmdHis').str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
-            $stationAeTitle = env('DCM4CHEE_STATION_AE_TITLE', 'RX01');
-            $hl7Message = "MSH|^~\\&|MEU_ERP|CLINICA|DCM4CHEE|PACS|".now()->format('YmdHis')."||ORM^O01|{$pedido}|P|2.5\n".
-                "PID|||{$ag->paciente->id}||".strtoupper(str_replace(' ','^',$ag->paciente->nome))."\nPV1||O\nORC|NW|{$pedido}\n".
-                "OBR|1|{$pedido}||{$exame->codigo}^{$exame->descricao}|||".date('YmdHi', strtotime($data['agendado_para'])).
-                "|||||||||||{$stationAeTitle}||||||{$exame->modalidade}";
+            $accession = 'ACC'.now()->format('YmdHis').str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
+            $stationAeTitle = env('DCM4CHEE_STATION_AE_TITLE', 'SCHEDULEDSTATION');
+            $modality = $exame->modalidade ?: env('DCM4CHEE_MODALITY_DEFAULT', 'CR');
+            $scheduledDateTime = date('YmdHi', strtotime($data['agendado_para']));
+
+            $hl7Message = "MSH|^~\\&|ERP|CLINICA|DCM4CHEE|PACS|".now()->format('YmdHis')."||ORM^O01|{$pedido}|P|2.5\r".
+                "PID|||{$ag->paciente->id}||".strtoupper(str_replace(' ','^',$ag->paciente->nome))."\r".
+                "PV1||O\r".
+                "ORC|NW|{$pedido}|||SC|||||||||||||{$stationAeTitle}\r".
+                "OBR|1|{$pedido}|{$accession}|{$exame->codigo}^{$exame->descricao}^L|||{$scheduledDateTime}|||||||||||{$accession}||||||{$modality}";
 
             $ack = '';
             try { $ack = $hl7->sendOrm(env('DCM4CHEE_HOST','localhost'), (int) env('DCM4CHEE_HL7_PORT',2575), $hl7Message); } catch (\Throwable $e) { $ack = $e->getMessage(); }
