@@ -1,0 +1,10 @@
+dn: hl7ApplicationName=*,dicomDeviceName=dcm4chee-arc,cn=Devices,cn=DICOM Configuration,dc=dcm4che,dc=org
+changetype: modify
+add: hl7ScheduleProcedureTemplateURI
+hl7ScheduleProcedureTemplateURI: ${jboss.server.temp.url}/dcm4chee-arc/hl7-order2dcm.xsl
+-
+add: hl7OrderMissingStudyIUIDPolicy
+hl7OrderMissingStudyIUIDPolicy: GENERATE
+-
+add: hl7ScheduledStationAETInOrder
+hl7ScheduledStationAETInOrder: ORC_18
