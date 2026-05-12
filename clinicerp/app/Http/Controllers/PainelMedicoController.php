@@ -65,6 +65,7 @@ class PainelMedicoController extends Controller
         $ag = Agendamento::with('paciente')->findOrFail($data['agendamento_id']);
         $exames = Exame::whereIn('id', $data['exame_ids'])->get()->keyBy('id');
 
+        $resultadoEnvio = ['aceitos' => 0, 'rejeitados' => 0, 'falhas_conexao' => 0, 'sem_ack' => 0];
         foreach ($data['exame_ids'] as $index => $exameId) {
             $exame = $exames[$exameId];
             $pedido = 'PED'.now()->format('YmdHis').str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
@@ -80,15 +81,34 @@ class PainelMedicoController extends Controller
                 "OBR|1|{$pedido}|{$accession}|{$exame->codigo}^{$exame->descricao}^L|||{$scheduledDateTime}|||||||||||{$accession}||||||{$modality}";
 
             $ack = '';
-            try { $ack = $hl7->sendOrm(env('DCM4CHEE_HOST','localhost'), (int) env('DCM4CHEE_HL7_PORT',2575), $hl7Message); } catch (\Throwable $e) { $ack = $e->getMessage(); }
+            $status = 'erro envio pacs';
+            try {
+                $ack = $hl7->sendOrm(env('DCM4CHEE_HOST', 'localhost'), (int) env('DCM4CHEE_HL7_PORT', 2575), $hl7Message);
+                $ackParsed = $hl7->parseAck($ack);
+                if ($ackParsed['ack_code'] === 'AA') {
+                    $status = 'enviado ao pacs';
+                    $resultadoEnvio['aceitos']++;
+                } elseif (in_array($ackParsed['ack_code'], ['AE', 'AR'], true)) {
+                    $status = 'rejeitado pacs';
+                    $resultadoEnvio['rejeitados']++;
+                } else {
+                    $status = 'ack invalido pacs';
+                    $resultadoEnvio['sem_ack']++;
+                }
+            } catch (\Throwable $e) {
+                $ack = $e->getMessage();
+                $resultadoEnvio['falhas_conexao']++;
+            }
 
-            ExameSolicitado::create(['agendamento_id'=>$ag->id,'medico_id'=>$medico->id,'paciente_id'=>$ag->paciente_id,'exame_id'=>$exame->id,'numero_pedido'=>$pedido,'agendado_para'=>$data['agendado_para'],'status'=>'aguardando resultado','hl7_ack'=>$ack]);
+            ExameSolicitado::create(['agendamento_id'=>$ag->id,'medico_id'=>$medico->id,'paciente_id'=>$ag->paciente_id,'exame_id'=>$exame->id,'numero_pedido'=>$pedido,'agendado_para'=>$data['agendado_para'],'status'=>$status,'hl7_ack'=>$ack]);
         }
+
+        $message = "Envio para DCM4CHEE concluído. Aceitos: {$resultadoEnvio['aceitos']}, Rejeitados: {$resultadoEnvio['rejeitados']}, Falhas de conexão: {$resultadoEnvio['falhas_conexao']}, ACK inválido/ausente: {$resultadoEnvio['sem_ack']}.";
 
         if ($request->expectsJson()) {
-            return response()->json(['message' => 'Exame(s) solicitado(s) ao DCM4CHEE.']);
+            return response()->json(['message' => $message, 'resultado_envio' => $resultadoEnvio]);
         }
 
-        return back()->with('status','Exame(s) solicitado(s) ao DCM4CHEE.');
+        return back()->with('status', $message);
     }
 }

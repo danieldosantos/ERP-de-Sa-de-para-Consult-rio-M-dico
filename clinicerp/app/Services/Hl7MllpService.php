@@ -20,4 +20,36 @@ class Hl7MllpService
 
         return $response;
     }
+
+    public function parseAck(string $rawAck): array
+    {
+        $ack = trim(str_replace(["\x0b", "\x1c", "\x0d"], ["", "", "\n"], $rawAck));
+        $lines = array_values(array_filter(array_map('trim', explode("\n", $ack))));
+        $msa = null;
+        foreach ($lines as $line) {
+            if (str_starts_with($line, 'MSA|')) {
+                $msa = $line;
+                break;
+            }
+        }
+
+        if (! $msa) {
+            return [
+                'ack_code' => null,
+                'ack_control_id' => null,
+                'ack_text' => 'ACK sem segmento MSA',
+                'accepted' => false,
+            ];
+        }
+
+        $parts = explode('|', $msa);
+        $ackCode = $parts[1] ?? null;
+
+        return [
+            'ack_code' => $ackCode,
+            'ack_control_id' => $parts[2] ?? null,
+            'ack_text' => $parts[3] ?? null,
+            'accepted' => $ackCode === 'AA',
+        ];
+    }
 }
