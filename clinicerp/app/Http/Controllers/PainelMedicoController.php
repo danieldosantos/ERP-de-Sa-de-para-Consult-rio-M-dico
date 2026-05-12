@@ -85,7 +85,7 @@ class PainelMedicoController extends Controller
             try {
                 $ack = $hl7->sendOrm(env('DCM4CHEE_HOST', 'localhost'), (int) env('DCM4CHEE_HL7_PORT', 2575), $hl7Message);
                 $ackParsed = $hl7->parseAck($ack);
-                if ($ackParsed['ack_code'] === 'AA') {
+                if (in_array($ackParsed['ack_code'], ['AA', 'CA'], true)) {
                     $status = 'enviado ao pacs';
                     $resultadoEnvio['aceitos']++;
                 } elseif (in_array($ackParsed['ack_code'], ['AE', 'AR'], true)) {
