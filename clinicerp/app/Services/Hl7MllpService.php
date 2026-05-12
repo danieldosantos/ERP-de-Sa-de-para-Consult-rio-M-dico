@@ -15,7 +15,25 @@ class Hl7MllpService
 
         fwrite($client, $mllp);
         stream_set_timeout($client, 10);
-        $response = fread($client, 4096) ?: '';
+
+        $response = '';
+        while (! feof($client)) {
+            $chunk = fread($client, 4096);
+            if ($chunk === false || $chunk === '') {
+                $meta = stream_get_meta_data($client);
+                if (($meta['timed_out'] ?? false) === true) {
+                    break;
+                }
+
+                continue;
+            }
+
+            $response .= $chunk;
+            if (str_contains($response, "\x1c\x0d")) {
+                break;
+            }
+        }
+
         fclose($client);
 
         return $response;
@@ -49,7 +67,7 @@ class Hl7MllpService
             'ack_code' => $ackCode,
             'ack_control_id' => $parts[2] ?? null,
             'ack_text' => $parts[3] ?? null,
-            'accepted' => $ackCode === 'AA',
+            'accepted' => in_array($ackCode, ['AA', 'CA'], true),
         ];
     }
 }
